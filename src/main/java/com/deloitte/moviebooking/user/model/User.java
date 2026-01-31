@@ -84,4 +84,17 @@ public class User {
     public String getRole() {
         return role;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }
