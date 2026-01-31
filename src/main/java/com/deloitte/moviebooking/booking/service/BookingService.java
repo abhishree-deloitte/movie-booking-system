@@ -7,6 +7,7 @@ import com.deloitte.moviebooking.common.exception.AppException;
 import com.deloitte.moviebooking.show.model.Show;
 import com.deloitte.moviebooking.show.repository.ShowRepository;
 import com.deloitte.moviebooking.theatre.screen.seat.model.Seat;
+import com.deloitte.moviebooking.theatre.screen.seat.model.SeatType;
 import com.deloitte.moviebooking.theatre.screen.seat.repository.SeatRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import java.util.List;
 @Service
 public class BookingService {
 
+    private static final double PREMIUM_SEAT_EXTRA = 50.0;
+
     private final BookingRepository bookingRepository;
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
@@ -29,6 +32,25 @@ public class BookingService {
         this.bookingRepository = bookingRepository;
         this.showRepository = showRepository;
         this.seatRepository = seatRepository;
+    }
+
+    /**
+     * Calculates total price for a booking.
+     */
+    private double calculateTotalPrice(Show show, List<Seat> seats) {
+
+        double basePrice = show.getMovie().getBasePrice();
+        double total = 0;
+
+        for (Seat seat : seats) {
+            total += basePrice;
+
+            if (seat.getType() == SeatType.PREMIUM) {
+                total += PREMIUM_SEAT_EXTRA;
+            }
+        }
+
+        return total;
     }
 
     /**
@@ -47,7 +69,9 @@ public class BookingService {
             throw new AppException("No seats selected");
         }
 
-        Booking booking = new Booking(userId, show, seats);
+        double totalPrice = calculateTotalPrice(show, seats);
+
+        Booking booking = new Booking(userId, show, seats, totalPrice);
 
         return bookingRepository.save(booking);
     }

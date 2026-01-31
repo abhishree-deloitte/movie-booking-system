@@ -19,6 +19,12 @@ public class Booking {
     private String bookingId;
 
     /**
+     * Total price paid for the booking.
+     */
+    @Column(nullable = false)
+    private double totalPrice;
+
+    /**
      * User who made the booking.
      * Stored as userId from JWT.
      */
@@ -60,10 +66,11 @@ public class Booking {
         // JPA
     }
 
-    public Booking(String userId, Show show, List<Seat> seats) {
+    public Booking(String userId, Show show, List<Seat> seats, double totalPrice) {
         this.userId = userId;
         this.show = show;
         this.seats = seats;
+        this.totalPrice = totalPrice;
         this.status = BookingStatus.UPCOMING;
         this.createdAt = LocalDateTime.now();
     }
@@ -95,4 +102,9 @@ public class Booking {
     public void setStatus(BookingStatus status) {
         this.status = status;
     }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
 }
