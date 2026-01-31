@@ -10,46 +10,56 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Global exception handler for the application.
+ * GlobalExceptionHandler handles all application exceptions
+ * and converts them into meaningful HTTP responses.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
+    /**
+     * Handles application-level exceptions.
+     */
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<?> handleAppException(AppException ex) {
 
-                String errorMessage = ex.getBindingResult()
-                        .getFieldErrors()
-                        .get(0)
-                        .getDefaultMessage();
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "error", ex.getMessage()
+                ));
+    }
 
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of(
-                                "timestamp", LocalDateTime.now(),
-                                "error", errorMessage
-                        ));
-        }
+    /**
+     * Handles validation errors from @Valid annotations.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
 
-        @ExceptionHandler(AppException.class)
-        public ResponseEntity<?> handleAppException(AppException ex) {
+        String errorMessage = ex.getBindingResult()
+                .getFieldErrors()
+                .get(0)
+                .getDefaultMessage();
 
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of(
-                                "timestamp", LocalDateTime.now(),
-                                "error", ex.getMessage()
-                        ));
-        }
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "error", errorMessage
+                ));
+    }
 
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<?> handleUnhandled(Exception ex) {
+    /**
+     * Fallback handler for unexpected exceptions.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleUnhandled(Exception ex) {
 
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(Map.of(
-                                "timestamp", LocalDateTime.now(),
-                                "error", "Something went wrong"
-                        ));
-        }
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "error", "Something went wrong"
+                ));
+    }
 }
