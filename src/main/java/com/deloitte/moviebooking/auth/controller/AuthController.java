@@ -4,6 +4,9 @@ import com.deloitte.moviebooking.auth.dto.AuthResponse;
 import com.deloitte.moviebooking.auth.dto.LoginRequest;
 import com.deloitte.moviebooking.auth.dto.RegisterRequest;
 import com.deloitte.moviebooking.auth.service.AuthService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +33,7 @@ public class AuthController {
      * @return success message
      */
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request) {
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         String token = authService.register(request);
         return new AuthResponse(token);
     }
@@ -42,7 +45,7 @@ public class AuthController {
      * @return JWT token
      */
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request) {
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         String token = authService.login(request);
         return new AuthResponse(token);
     }

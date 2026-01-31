@@ -8,6 +8,7 @@ import com.deloitte.moviebooking.user.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.deloitte.moviebooking.common.exception.AppException;
 
 /**
  * AuthService contains business logic related to
@@ -54,7 +55,7 @@ public class AuthService {
             return jwtUtil.generateToken(savedUser.getUserId(), savedUser.getRole());
 
         } catch (DataIntegrityViolationException ex) {
-            throw new RuntimeException("Username already exists");
+            throw new AppException("Username already exists");
         }
     }
 
@@ -66,14 +67,11 @@ public class AuthService {
      * @return JWT token string
      */
     public String login(LoginRequest request) {
-
         User user = userRepository.findByUsername(request.username)
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
-
+                .orElseThrow(() -> new AppException("Invalid username or password"));
         if (!passwordEncoder.matches(request.password, user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new AppException("Invalid username or password");
         }
-
         return jwtUtil.generateToken(user.getUserId(), user.getRole());
     }
 }

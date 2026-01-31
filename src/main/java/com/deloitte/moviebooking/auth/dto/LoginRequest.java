@@ -1,11 +1,15 @@
 package com.deloitte.moviebooking.auth.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  * Request body for user login.
- * Used by /auth/login API.
  */
 public class LoginRequest {
 
+    @NotBlank(message = "Username cannot be empty")
     public String username;
+
+    @NotBlank(message = "Password cannot be empty")
     public String password;
 }
