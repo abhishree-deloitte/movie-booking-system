@@ -1,0 +1,1 @@
+“At this stage, I focused on logical separation and service boundaries. These can be split into independent services later.”
