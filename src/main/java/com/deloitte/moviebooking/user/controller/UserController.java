@@ -2,6 +2,8 @@ package com.deloitte.moviebooking.user.controller;
 
 import com.deloitte.moviebooking.booking.model.Booking;
 import com.deloitte.moviebooking.booking.service.BookingService;
+import com.deloitte.moviebooking.notification.model.Notification;
+import com.deloitte.moviebooking.notification.service.NotificationService;
 import com.deloitte.moviebooking.user.dto.UpdateEmailRequest;
 import com.deloitte.moviebooking.user.dto.UpdateUsernameRequest;
 import com.deloitte.moviebooking.user.dto.UserProfileResponse;
@@ -22,92 +24,93 @@ import java.util.List;
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 
-    private final UserService userService;
-    private final BookingService bookingService;
+        private final UserService userService;
+        private final BookingService bookingService;
+        private final NotificationService notificationService;
 
-    public UserController(UserService userService,
-                          BookingService bookingService) {
-        this.userService = userService;
-        this.bookingService = bookingService;
-    }
+        public UserController(
+                UserService userService,
+                BookingService bookingService,
+                NotificationService notificationService
+        ) {
+                this.userService = userService;
+                this.bookingService = bookingService;
+                this.notificationService = notificationService;
+        }
 
-    /**
-     * Get authenticated user's profile.
-     */
-    @GetMapping("/me")
-    public UserProfileResponse getMyProfile() {
+        /**
+         * Get authenticated user's profile.
+         */
+        @GetMapping("/me")
+        public UserProfileResponse getMyProfile() {
 
-        String userId = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal()
-                .toString();
+                String userId = getUserId();
 
-        User user = userService.getUserById(userId);
+                User user = userService.getUserById(userId);
 
-        return new UserProfileResponse(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail()
-        );
-    }
+                return new UserProfileResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail()
+                );
+        }
 
-    /**
-     * Fetch bookings of authenticated user.
-     */
-    @GetMapping("/me/bookings")
-    public List<Booking> myBookings() {
+        /**
+         * Fetch bookings of authenticated user.
+         */
+        @GetMapping("/me/bookings")
+        public List<Booking> myBookings() {
+                return bookingService.getBookingsForUser(getUserId());
+        }
 
-        String userId = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal()
-                .toString();
+        /**
+         * Fetch notifications of authenticated user.
+         */
+        @GetMapping("/me/notifications")
+        public List<Notification> myNotifications() {
+                return notificationService.getUserNotifications(getUserId());
+        }
 
-        return bookingService.getBookingsForUser(userId);
-    }
+        /**
+         * Update username.
+         */
+        @PutMapping("/me/username")
+        public UserProfileResponse updateUsername(
+                @Valid @RequestBody UpdateUsernameRequest request
+        ) {
+                User user = userService.updateUsername(getUserId(), request.username);
 
-    /**
-     * Update username.
-     */
-    @PutMapping("/me/username")
-    public UserProfileResponse updateUsername(
-            @Valid @RequestBody UpdateUsernameRequest request
-    ) {
-        String userId = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal()
-                .toString();
+                return new UserProfileResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail()
+                );
+        }
 
-        User user = userService.updateUsername(userId, request.username);
+        /**
+         * Update email.
+         */
+        @PutMapping("/me/email")
+        public UserProfileResponse updateEmail(
+                @Valid @RequestBody UpdateEmailRequest request
+        ) {
+                User user = userService.updateEmail(getUserId(), request.email);
 
-        return new UserProfileResponse(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail()
-        );
-    }
+                return new UserProfileResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getEmail()
+                );
+        }
 
-    /**
-     * Update email.
-     */
-    @PutMapping("/me/email")
-    public UserProfileResponse updateEmail(
-            @Valid @RequestBody UpdateEmailRequest request
-    ) {
-        String userId = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal()
-                .toString();
-
-        User user = userService.updateEmail(userId, request.email);
-
-        return new UserProfileResponse(
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail()
-        );
-    }
+        /**
+         * Extract userId from SecurityContext.
+         */
+        private String getUserId() {
+                return SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal()
+                        .toString();
+        }
 }
