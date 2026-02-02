@@ -5,13 +5,13 @@ import com.deloitte.moviebooking.theatre.screen.seat.model.Seat;
 import jakarta.persistence.*;
 
 /**
- * Represents seat availability for a specific show.
+ * Represents seat availability in the context of a show.
  *
- * A seat is NOT globally available/unavailable.
- * Its availability is always evaluated in the context of a show.
+ * Seats are NOT global; they are evaluated per show.
  *
  * Lifecycle:
- * AVAILABLE -> BOOKED -> AVAILABLE (on cancellation)
+ * AVAILABLE -> RESERVED -> BOOKED
+ * BOOKED -> AVAILABLE (on cancellation)
  */
 @Entity
 @Table(
@@ -27,11 +27,9 @@ public class ShowSeat {
     private String showSeatId;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "show_id")
     private Show show;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "seat_id")
     private Seat seat;
 
     @Enumerated(EnumType.STRING)
@@ -40,18 +38,20 @@ public class ShowSeat {
 
     protected ShowSeat() {}
 
-    public ShowSeat(Show show, Seat seat) {
-        this.show = show;
-        this.seat = seat;
+    public void reserve() {
+        this.status = ShowSeatStatus.RESERVED;
+    }
+
+    public void book() {
+        this.status = ShowSeatStatus.BOOKED;
+    }
+
+    public void release() {
         this.status = ShowSeatStatus.AVAILABLE;
     }
 
     public ShowSeatStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(ShowSeatStatus status) {
-        this.status = status;
     }
 
     public Seat getSeat() {

@@ -1,12 +1,12 @@
 package com.deloitte.moviebooking.booking.controller;
 
+import com.deloitte.moviebooking.booking.dto.CreateBookingRequest;
 import com.deloitte.moviebooking.booking.model.Booking;
 import com.deloitte.moviebooking.booking.service.BookingService;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for booking-related APIs.
@@ -23,12 +23,12 @@ public class BookingController {
 
     /**
      * Creates a new booking for the authenticated user.
+     * User explicitly selects seats on UI.
      */
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public Booking createBooking(
-            @RequestParam String showId,
-            @RequestParam List<String> seatIds
+            @Valid @RequestBody CreateBookingRequest request
     ) {
         String userId = SecurityContextHolder
                 .getContext()
@@ -36,11 +36,15 @@ public class BookingController {
                 .getPrincipal()
                 .toString();
 
-        return bookingService.createBooking(userId, showId, seatIds);
+        return bookingService.createBooking(
+                userId,
+                request.getShowId(),
+                request.getSeatIds()
+        );
     }
-    
+
     /**
-     * Fetch details of a booking.
+     * Fetch booking details.
      */
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{bookingId}")
@@ -56,7 +60,7 @@ public class BookingController {
     }
 
     /**
-     * Cancels a booking.
+     * Cancels a booking and releases seats.
      */
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/{bookingId}/cancel")
@@ -70,5 +74,4 @@ public class BookingController {
 
         return bookingService.cancelBooking(bookingId, userId);
     }
-
 }
