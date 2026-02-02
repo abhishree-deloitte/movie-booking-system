@@ -29,7 +29,8 @@ Content-Type: application/json
 {
   "username": "john_doe",
   "email": "john.doe@example.com",
-  "password": "StrongPassword@123"
+  "password": "StrongPassword@123",
+  "role": "USER"
 }
 ```
 
@@ -186,7 +187,8 @@ Content-Type: application/json
 ```json
 {
   "title": "Inception",
-  "description": "Sci-fi thriller",
+  "durationMins": 180,
+  "genre": "Sci-fi thriller",
   "basePrice": 200
 }
 ```
