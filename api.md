@@ -311,6 +311,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
+
 ## SCREEN & SEAT MODULE
 
 ### 11 Create Screen
@@ -378,9 +379,63 @@ POST /movies/{movieId}/shows
 
 ---
 
+### 14 Get Theatre Shows for a given Movie
+
+**Endpoint**
+
+```
+GET /theatres/{theatreId}/movies/{movieId}/shows
+```
+
+**Auth**: USER / ADMIN
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+### 15 Get Seats in a Show
+
+**Endpoint**
+
+```
+GET /shows/{showId}/seats
+```
+
+**Auth**: USER / ADMIN
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+### 16 Get Theatres for a Movie
+
+**Endpoint**
+
+```
+GET /movies/{movieId}/theatres
+```
+
+**Auth**: USER / ADMIN
+
+**Headers**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
 ## BOOKING MODULE
 
-### 14 Create Booking
+### 17 Create Booking
 
 **Endpoint**
 
@@ -403,7 +458,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 15 Cancel Booking
+### 18 Cancel Booking
 
 **Endpoint**
 
@@ -423,7 +478,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ## NOTIFICATION MODULE
 
-### 16 Get My Notifications
+### 19 Get My Notifications
 
 **Endpoint**
 
