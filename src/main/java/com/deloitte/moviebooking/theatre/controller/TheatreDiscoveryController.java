@@ -7,6 +7,14 @@ import com.deloitte.moviebooking.show.service.ShowDiscoveryService;
 
 import java.util.List;
 
+/**
+ * Handles discovery of shows for a given movie in a theatre.
+ *
+ * Flow:
+ * Theatre + Movie -> Shows
+ *
+ * Throws AppException if no shows exist.
+ */
 @RestController
 @RequestMapping("/theatres")
 public class TheatreDiscoveryController {

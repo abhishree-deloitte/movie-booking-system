@@ -9,8 +9,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
  
- import java.util.List;
+import java.util.List;
 
+/**
+ * REST controller for show seat-related APIs.
+ *
+ * Provides seat availability for a show.
+ *
+ * Only seats with status AVAILABLE are returned.
+ * BOOKED seats are hidden from users.
+ */
 @RestController
 @RequestMapping("/shows")
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
